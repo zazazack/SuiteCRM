@@ -96,4 +96,6 @@ $mod_strings = array (
   'LBL_NEVER_OPTIMISED' => 'Never',
   'LBL_USE_AOD_SEARCH' => 'Use Advanced OpenDiscovery Search',
   'LBL_USE_VANILLA_SEARCH' => 'Use standard SugarCRM search',
+  'LBL_AOD_MODULE_FILTER' => 'Module filter',
+  'LBL_ALL_MODULES' => 'All modules',
 );

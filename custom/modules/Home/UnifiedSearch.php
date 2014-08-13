@@ -53,6 +53,10 @@ if(!empty($_REQUEST['start'])){
 if(!empty($_REQUEST['total'])){
     $total = $_REQUEST['total'];
 }
+$moduleFilter = '';
+if(!empty($_REQUEST['module_filter'])){
+    $moduleFilter = $_REQUEST['module_filter'];
+}
 if(array_key_exists('listViewStartButton',$_REQUEST)){
     $start = 0;
 }elseif(array_key_exists('listViewPrevButton',$_REQUEST)){
@@ -63,21 +67,36 @@ if(array_key_exists('listViewStartButton',$_REQUEST)){
     $start = floor($total / $amount) * $amount;
 }
 if($queryString){
-    $res = doSearch($index, $queryString, $start, $amount);
+    $res = doSearch($index, $queryString, $moduleFilter, $start, $amount);
     $total = $res['total'];
     $hits = $res['hits'];
 }
 
 
 ?>
-<form name='UnifiedSearchAdvancedMain' action='index.php' method='POST' class="search_form">
+<form name='UnifiedSearchAdvancedMain' id="aod_search_form" action='index.php' method='POST' class="search_form">
     <input type='hidden' name='query_string' value='test'>
     <input type='hidden' name='action' value='UnifiedSearch'>
     <input id='searchFieldMain' class='searchField' type='text' size='80' name='query_string' placeholder='<?php echo translate("LBL_SEARCH_QUERY_PLACEHOLDER","AOD_Index");?>' value='<?php echo $queryString;?>'>
-    <input type="submit" class="button primary" value="<?php echo translate("LBL_SEARCH_BUTTON","AOD_Index");?>">&nbsp;
+    <input type="submit" class="button primary" value="<?php echo translate("LBL_SEARCH_BUTTON","AOD_Index");?>"><br>
+    <div id='advanced_options'>
+        <label for="module_filter"><?php echo translate("LBL_AOD_MODULE_FILTER","AOD_Index");?></label>
+        <select name='module_filter' id="module_filter">
+            <?php
+            $modules = AOD_Index::getIndexableModules();
+            global $app_list_strings;
+            foreach($modules as $key => $val){
+                $modules[$key] = empty($app_list_strings['moduleList'][$key]) ? $key : $app_list_strings['moduleList'][$key];
+            }
+            asort($modules);
+            $modules = array_merge(array(''=>translate("LBL_ALL_MODULES","AOD_Index")),$modules);
+            echo get_select_options($modules,$moduleFilter);
+        ?>
+        </select>
+    </div>
 </form>
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list View'>
-    <?php getPaginateHTML($queryString, $start,$amount,$total); ?>
+    <?php getPaginateHTML($queryString, $start,$amount,$total,$moduleFilter); ?>
     <tr height='20'>
         <th scope='col' width='10%' >
 				<span sugar="sugar1">
@@ -137,7 +156,7 @@ foreach($hits as $hit){
     }
 ?>
 </table>
-
+<script type="application/javascript" src="<?php echo get_custom_file_if_exists('modules/AOD_Index/search/search.js');?>">
 <?php
 function getRecordSummary(SugarBean $bean){
     global $listViewDefs;
@@ -153,7 +172,7 @@ function getRecordSummary(SugarBean $bean){
     }
     $summary = array();;
     foreach($listViewDefs[$bean->module_dir] as $key => $entry){
-        if(!$entry['default']){
+        if(empty($entry['default'])){
             continue;
         }
         $key = strtolower($key);
@@ -197,7 +216,7 @@ function getCorrectMTime($filePath){
     return ($time + $adjustment);
 }
 
-function doSearch($index, $queryString, $start = 0, $amount = 20){
+function doSearch($index, $queryString, $moduleFilter, $start = 0, $amount = 20){
     $cachePath = 'cache/modules/AOD_Index/QueryCache/' . md5($queryString);
     if(is_file($cachePath)){
         $mTime = getCorrectMTime($cachePath);
@@ -218,6 +237,16 @@ function doSearch($index, $queryString, $start = 0, $amount = 20){
         //Cache results so pagination is nice and snappy.
         cacheQuery($queryString,$hits);
     }
+    if(!empty($moduleFilter)){
+        $newHits = array();
+         foreach($hits as $hit){
+             if($hit->record_module != $moduleFilter){
+                continue;
+             }
+             $newHits[] = $hit;
+         }
+         $hits = $newHits;
+    }
 
     $total = count($hits);
     $hits = array_slice($hits,$start,$amount);
@@ -225,7 +254,7 @@ function doSearch($index, $queryString, $start = 0, $amount = 20){
     return $res;
 }
 
-function getPaginateHTML($queryString, $start, $amount, $total){
+function getPaginateHTML($queryString, $start, $amount, $total, $moduleFilter){
     $first = !$start;
     $last = ($start + $amount) > $total;
     if($first){
@@ -250,6 +279,7 @@ function getPaginateHTML($queryString, $start, $amount, $total){
             <input type="hidden" name="start" value="<?php echo $start;?>">
             <input type="hidden" name="total" value="<?php echo $total;?>">
             <input type="hidden" name="query_string" value="<?php echo $queryString;?>">
+            <input type="hidden" name="module_filter" value="<?php echo $moduleFilter;?>">
             <button type="submit" id="listViewStartButton_top" name="listViewStartButton" title="Start" class="button" <?php echo $first ? 'disabled="disabled"' : ''?>>
                 <img src="<?php echo $startImage;?>" alt="Start" align="absmiddle" border="0">
             </button>

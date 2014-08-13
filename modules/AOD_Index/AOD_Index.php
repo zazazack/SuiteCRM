@@ -71,12 +71,13 @@ class AOD_Index extends AOD_Index_sugar {
     }
 
     public function getIndex(){
-        $indexes = $this->get_full_list();
-        if(count($indexes)){
-            $index = $indexes[0];
+        $index = BeanFactory::getBean('AOD_Index',1);
+        if(!empty($index) && !empty($index->id)){
             return $index;
         }else{
             $index = new AOD_Index();
+            $index->id = 1;
+            $index->new_with_id = true;
             $index->name = "Index";
             $index->location = "modules/AOD_Index/Index/Index";
             $index->save();
@@ -247,21 +248,21 @@ class AOD_Index extends AOD_Index_sugar {
             if(!$this->isEnabled()){
                 return;
             }
-            $bean_name = $GLOBALS['beanList'][$module];
-            if(!$bean_name){
+            if(empty($GLOBALS['beanList'][$module])){
                 return false;
             }
+            $bean_name = $GLOBALS['beanList'][$module];
             $bean = new $bean_name();
             if(!$bean || ! $bean instanceof SugarBean){
                 return false;
             }
 
-            $bean->retrieve($beanId);
-            if(!$bean){
+            if(!self::isModuleSearchable($module,BeanFactory::getObjectName($module))){
                 return false;
             }
 
-            if(!self::isModuleSearchable($module,$bean->getObjectName())){
+            $bean->retrieve($beanId);
+            if(!$bean){
                 return false;
             }
 

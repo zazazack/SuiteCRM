@@ -40,6 +40,7 @@ if(!$luceneSearch){
     return;
 }
 require_once('include/utils.php');
+DBManager::setQueryLimit(0);
 echo "<a href='index.php?action=UnifiedSearch&module=Home&search_fallback=1&query_string=".$queryString."'>".translate("LBL_USE_VANILLA_SEARCH","AOD_Index")."</a>";
 
 $index = BeanFactory::getBean("AOD_Index")->getIndex();

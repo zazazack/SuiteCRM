@@ -152,7 +152,7 @@ foreach($hits as $hit){
     }
 ?>
 </table>
-<script type="application/javascript" src="<?php echo get_custom_file_if_exists('modules/AOD_Index/search/search.js');?>">
+<script type="application/javascript" src="<?php echo get_custom_file_if_exists('modules/AOD_Index/search/search.js');?>"></script>
 <?php
 function getRecordSummary(SugarBean $bean){
     global $listViewDefs;
@@ -192,7 +192,8 @@ function getModuleLabel($module){
     return translate('LBL_MODULE_NAME', $module);
 }
 function cacheQuery($queryString,$resArray){
-    $file = create_cache_directory('modules/AOD_Index/QueryCache/' . md5($queryString));
+    global $current_user;
+    $file = create_cache_directory('modules/AOD_Index/QueryCache/' . md5($queryString).'-'.$current_user->id);
     $out = serialize($resArray);
     sugar_file_put_contents_atomic($file, $out);
 }
@@ -214,7 +215,7 @@ function getCorrectMTime($filePath){
 
 function doSearch($index, $queryString, $moduleFilter, $start = 0, $amount = 20){
     global $current_user;
-    $cachePath = 'cache/modules/AOD_Index/QueryCache/' . md5($queryString);
+    $cachePath = 'cache/modules/AOD_Index/QueryCache/' . md5($queryString).'-'.$current_user->id;
     if(is_file($cachePath)){
         $mTime = getCorrectMTime($cachePath);
         if($mTime > (time() - 5*60)){

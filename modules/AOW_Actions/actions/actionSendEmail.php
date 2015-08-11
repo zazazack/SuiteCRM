@@ -52,11 +52,11 @@ class actionSendEmail extends actionBase {
 
         $html .= "<table border='0' cellpadding='0' cellspacing='0' width='100%'>";
         $html .= "<tr>";
-        $html .= '<td id="relate_label" scope="row" valign="top">'.translate("LBL_INDIVIDUAL_EMAILS","AOW_Actions").':';
+        $html .= '<td id="relate_label" scope="row" valign="top">'.translate("LBL_FROM_ADDRESS","AOW_Actions").':';
         $html .= '</td>';
         $html .= "<td valign='top' width='37.5%'>";
-        $html .= "<input type='hidden' name='aow_actions_param[".$line."][individual_email]' value='0' >";
-        $html .= "<input type='checkbox' id='aow_actions_param[".$line."][individual_email]' name='aow_actions_param[".$line."][individual_email]' value='1' $checked></td>";
+        $html .= "<select name='aow_actions_param[".$line."][from_type]' id='aow_actions_param_from_type".$line."'  onchange='show_emailfrom($line);'>".get_select_options_with_id($app_list_strings['aow_email_from_list'], $params['from_type'])."</select> ";
+        $html .= "<span id='emailFrom".$line."_field'></span>";
         $html .= '</td>';
 
         if(!isset($params['email_template'])) $params['email_template'] = '';
@@ -71,6 +71,15 @@ class actionSendEmail extends actionBase {
         $html .= "&nbsp;<span name='edit_template' id='aow_actions_edit_template_link".$line."' $hidden><a href='javascript:edit_email_template_form(".$line.")' >".translate('LBL_EDIT_EMAIL_TEMPLATE','AOW_Actions')."</a></span>";
         $html .= "</td>";
         $html .= "</tr>";
+
+        $html .= "<tr>";
+        $html .= '<td id="relate_label" scope="row" valign="top">'.translate("LBL_INDIVIDUAL_EMAILS","AOW_Actions").':';
+        $html .= '</td>';
+        $html .= "<td valign='top' width='37.5%'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][individual_email]' value='0' >";
+        $html .= "<input type='checkbox' id='aow_actions_param[".$line."][individual_email]' name='aow_actions_param[".$line."][individual_email]' value='1' $checked></td>";
+        $html .= '</td>';
+        $html .= "</tr>";
         $html .= "<tr>";
         $html .= '<td id="name_label" scope="row" valign="top" width="12.5%">'.translate("LBL_EMAIL","AOW_Actions").':<span class="required">*</span></td>';
         $html .= '<td valign="top" scope="row" width="37.5%">';
@@ -82,6 +91,10 @@ class actionSendEmail extends actionBase {
         $html .= "</table>";
 
         $html .= "<script id ='aow_script".$line."'>";
+
+        if(isset($params['from_type']) && isset($params['from_address'])){
+            $html .= "show_emailfrom('".$line."','".$params['from_address']."');";
+        }
 
         //backward compatible
         if(isset($params['email_target_type']) && !is_array($params['email_target_type'])){

@@ -685,11 +685,17 @@ function getEmailableModules(){
     return $emailableModules;
 }
 
-function getRelatedEmailableFields($module){
+function getRelatedEmailableFields($module, $type = ''){
     global $beanList, $app_list_strings;
     $relEmailFields = array();
     $checked_link = array();
     $emailableModules = getEmailableModules();
+    if($type != ''){
+        if(!in_array($type,$emailableModules)) {
+            return '';
+        }
+        $emailableModules = array($type);
+    }
     if ($module != '') {
         if(isset($beanList[$module]) && $beanList[$module]){
             $mod = new $beanList[$module]();

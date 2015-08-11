@@ -113,11 +113,38 @@ function show_emailField(ln, cln, value){
             failure: function(result) {
                 document.getElementById('emailLine'+ln+'_field'+cln).innerHTML = '';
             }
-        }
+        };
 
         var aow_field_name = "aow_actions_param["+ln+"][email]["+cln+"]";
 
         YAHOO.util.Connect.asyncRequest ("GET", "index.php?module=AOW_WorkFlow&action=getEmailField&aow_module="+flow_module+"&aow_newfieldname="+aow_field_name+"&aow_type="+aow_emailtype+"&aow_value="+value,callback);
+    }
+    else {
+        document.getElementById('emailLine'+ln+'_field'+cln).innerHTML = '';
+    }
+}
+
+
+function show_emailfrom(ln, value){
+    if (typeof value === 'undefined') { value = ''; }
+
+    flow_module = document.getElementById('flow_module').value;
+    var aow_emailtype = document.getElementById('aow_actions_param_from_type'+ln).value;
+    if(aow_emailtype != ''){
+        var callback = {
+            success: function(result) {
+                document.getElementById('emailFrom'+ln+'_field').innerHTML = result.responseText;
+                SUGAR.util.evalScript(result.responseText);
+                enableQS(false);
+            },
+            failure: function(result) {
+                document.getElementById('emailFrom'+ln+'_field').innerHTML = '';
+            }
+        };
+
+        var aow_field_name = "aow_actions_param["+ln+"][from_address]";
+
+        YAHOO.util.Connect.asyncRequest ("GET", "index.php?module=AOW_WorkFlow&action=getEmailFromField&aow_module="+flow_module+"&aow_newfieldname="+aow_field_name+"&aow_type="+aow_emailtype+"&aow_value="+value,callback);
     }
     else {
         document.getElementById('emailLine'+ln+'_field'+cln).innerHTML = '';

@@ -125,6 +125,7 @@ class Account extends Company {
 	var $object_name = "Account";
 	var $importable = true;
 	var $new_schema = true;
+	var $angular = true;
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'opportunity_id', 'bug_id', 'case_id', 'contact_id', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id', 'parent_name', 'member_id'
 	);

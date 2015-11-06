@@ -103,146 +103,203 @@ class TemplateHandler {
      * @param metaDataDefs metadata definition as Array
      **/
     function buildTemplate($module, $view, $tpl, $ajaxSave, $metaDataDefs) {
-        $this->loadSmarty();
 
-        $cacheDir = create_cache_directory($this->templateDir. $module . '/');
-        $file = $cacheDir . $view . '.tpl';
-        $string = '{* Create Date: ' . date('Y-m-d H:i:s') . "*}\n";
-        $this->ss->left_delimiter = '{{';
-        $this->ss->right_delimiter = '}}';
-        $this->ss->assign('module', $module);
-        $this->ss->assign('built_in_buttons', array('CANCEL', 'DELETE', 'DUPLICATE', 'EDIT', 'FIND_DUPLICATES', 'SAVE', 'CONNECTOR'));
-        $contents = $this->ss->fetch($tpl);
-        //Insert validation and quicksearch stuff here
-        if($view == 'EditView' || strpos($view,'QuickCreate') || $ajaxSave || $view == "ConvertLead") {
+        $bean = BeanFactory::getBean($module);
 
-            global $dictionary, $beanList, $app_strings, $mod_strings;
-            $mod = $beanList[$module];
+        if($bean->angular){
 
-            if($mod == 'aCase') {
-                $mod = 'Case';
-            }
+            $field_defs = $bean->getFieldDefinitions();
+            $cacheDir = create_cache_directory($this->templateDir. $module . '/');
+            $file = $cacheDir . $view . '.json';
 
-            $defs = $dictionary[$mod]['fields'];
-            $defs2 = array();
-            //Retrieve all panel field definitions with displayParams Array field set
-            $panelFields = array();
+            $panels = array();
+            foreach($metaDataDefs['panels'] as $panel_id => $panel) {
+                $rows = array();
+                foreach($panel as $row_id => $row) {
+                    foreach($row as $entry) {
+                        if(empty($entry)) {
+                            $rows[$row_id][] = array();
+                            continue;
+                        }
 
-            foreach($metaDataDefs['panels'] as $panel) {
-                    foreach($panel as $row) {
-                            foreach($row as $entry) {
-                                    if(empty($entry)) {
-                                       continue;
-                                    }
+                        if(is_array($entry)) {
+                            $field = $entry['name'];
+                        } else {
+                            $field = $entry;
+                            $entry= array('name' => $entry);
+                        }
 
-                                    if(is_array($entry) &&
-                                       isset($entry['name']) &&
-                                       isset($entry['displayParams']) &&
-                                       isset($entry['displayParams']['required']) &&
-                                       $entry['displayParams']['required']) {
-                                       $panelFields[$entry['name']] = $entry;
-                                    }
+                        if(isset($field_defs[$field])){
+                            if(!isset($entry['label']) && isset($field_defs[$field]['vname'])){
+                                $entry['label'] = $field_defs[$field]['vname'];
+                            }
+                            if(!isset($entry['type']) && isset($field_defs[$field]['type'])){
+                                $entry['type'] = $field_defs[$field]['type'];
+                            }
 
-                                    if(is_array($entry)) {
-                                      $defs2[$entry['name']] = $entry;
-                                    } else {
-                                      $defs2[$entry] = array('name' => $entry);
-                                    }
-                            } //foreach
+                            $rows[$row_id][$field] = $entry;
+                        } else {
+                            $rows[$row_id][] = array();
+                        }
+
+
                     } //foreach
+                } //foreach
+                $panels[$panel_id] = $rows;
             } //foreach
 
-            foreach($panelFields as $field=>$value) {
-                      $nameList = array();
-                      if(!is_array($value['displayParams']['required'])) {
-                         $nameList[] = $field;
-                      } else {
-                         foreach($value['displayParams']['required'] as $groupedField) {
-                                 $nameList[] = $groupedField;
-                         }
+            $metaDataDefs['panels'] = $panels;
+            $contents = json_encode($metaDataDefs);
+
+            if($fh = @sugar_fopen($file, 'w')) {
+                fputs($fh, $contents);
+                fclose($fh);
+            }
+        }
+        else {
+
+            $this->loadSmarty();
+
+            $cacheDir = create_cache_directory($this->templateDir. $module . '/');
+            $file = $cacheDir . $view . '.tpl';
+            $string = '{* Create Date: ' . date('Y-m-d H:i:s') . "*}\n";
+            $this->ss->left_delimiter = '{{';
+            $this->ss->right_delimiter = '}}';
+            $this->ss->assign('module', $module);
+            $this->ss->assign('built_in_buttons', array('CANCEL', 'DELETE', 'DUPLICATE', 'EDIT', 'FIND_DUPLICATES', 'SAVE', 'CONNECTOR'));
+            $contents = $this->ss->fetch($tpl);
+            //Insert validation and quicksearch stuff here
+            if($view == 'EditView' || strpos($view,'QuickCreate') || $ajaxSave || $view == "ConvertLead") {
+
+                global $dictionary, $beanList, $app_strings, $mod_strings;
+                $mod = $beanList[$module];
+
+                if($mod == 'aCase') {
+                    $mod = 'Case';
+                }
+
+                $defs = $dictionary[$mod]['fields'];
+                $defs2 = array();
+                //Retrieve all panel field definitions with displayParams Array field set
+                $panelFields = array();
+
+                foreach($metaDataDefs['panels'] as $panel) {
+                        foreach($panel as $row) {
+                                foreach($row as $entry) {
+                                        if(empty($entry)) {
+                                           continue;
+                                        }
+
+                                        if(is_array($entry) &&
+                                           isset($entry['name']) &&
+                                           isset($entry['displayParams']) &&
+                                           isset($entry['displayParams']['required']) &&
+                                           $entry['displayParams']['required']) {
+                                           $panelFields[$entry['name']] = $entry;
+                                        }
+
+                                        if(is_array($entry)) {
+                                          $defs2[$entry['name']] = $entry;
+                                        } else {
+                                          $defs2[$entry] = array('name' => $entry);
+                                        }
+                                } //foreach
+                        } //foreach
+                } //foreach
+
+                foreach($panelFields as $field=>$value) {
+                          $nameList = array();
+                          if(!is_array($value['displayParams']['required'])) {
+                             $nameList[] = $field;
+                          } else {
+                             foreach($value['displayParams']['required'] as $groupedField) {
+                                     $nameList[] = $groupedField;
+                             }
+                          }
+
+                          foreach($nameList as $x) {
+                             if(isset($defs[$x]) &&
+                                isset($defs[$x]['type']) &&
+                                !isset($defs[$x]['required'])) {
+                                $defs[$x]['required'] = true;
+                             }
+                          }
+                } //foreach
+
+                //Create a base class with field_name_map property
+                $sugarbean = new stdClass;
+                $sugarbean->field_name_map = $defs;
+                $sugarbean->module_dir = $module;
+
+                $javascript = new javascript();
+                $view = $view == 'QuickCreate' ? "QuickCreate_{$module}" : $view;
+                $javascript->setFormName($view);
+
+                $javascript->setSugarBean($sugarbean);
+                if ($view != "ConvertLead")
+                    $javascript->addAllFields('', null,true);
+
+                $validatedFields = array();
+                $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty('LBL_ASSIGNED_TO'), 'false', '', 'assigned_user_id');
+                $validatedFields[] = 'assigned_user_name';
+                //Add remaining validation dependency for related fields
+                //1) a relate type as defined in vardefs
+                //2) set in metadata layout
+                //3) not have validateDepedency set to false in metadata
+                //4) have id_name in vardef entry
+                //5) not already been added to Array
+                foreach($sugarbean->field_name_map as $name=>$def) {
+
+                   if($def['type']=='relate' &&
+                      isset($defs2[$name]) &&
+                      (!isset($defs2[$name]['validateDependency']) || $defs2[$name]['validateDependency'] === true) &&
+                      isset($def['id_name']) &&
+                      !in_array($name, $validatedFields)) {
+
+                      if(isset($mod_strings[$def['vname']])
+                            || isset($app_strings[$def['vname']])
+                            || translate($def['vname'],$sugarbean->module_dir) != $def['vname']) {
+                         $vname = $def['vname'];
                       }
-
-                      foreach($nameList as $x) {
-                         if(isset($defs[$x]) &&
-                            isset($defs[$x]['type']) &&
-                            !isset($defs[$x]['required'])) {
-                            $defs[$x]['required'] = true;
-                         }
+                      else{
+                         $vname = "undefined";
                       }
-            } //foreach
+                      $javascript->addToValidateBinaryDependency($name, 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty($vname), (!empty($def['required']) ? 'true' : 'false'), '', $def['id_name']);
+                      $validatedFields[] = $name;
+                   }
+                } //foreach
 
-            //Create a base class with field_name_map property
-            $sugarbean = new stdClass;
-            $sugarbean->field_name_map = $defs;
-            $sugarbean->module_dir = $module;
+                $contents .= "{literal}\n";
+                $contents .= $javascript->getScript();
+                $contents .= $this->createQuickSearchCode($defs, $defs2, $view, $module);
+                $contents .= "{/literal}\n";
+            }else if(preg_match('/^SearchForm_.+/', $view)){
+                global $dictionary, $beanList, $app_strings, $mod_strings;
+                $mod = $beanList[$module];
 
-            $javascript = new javascript();
-            $view = $view == 'QuickCreate' ? "QuickCreate_{$module}" : $view;
-            $javascript->setFormName($view);
+                if($mod == 'aCase') {
+                    $mod = 'Case';
+                }
 
-            $javascript->setSugarBean($sugarbean);
-            if ($view != "ConvertLead")
-                $javascript->addAllFields('', null,true);
+                $defs = $dictionary[$mod]['fields'];
+                $contents .= '{literal}';
+                $contents .= $this->createQuickSearchCode($defs, array(), $view);
+                $contents .= '{/literal}';
+            }//if
 
-            $validatedFields = array();
-            $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty('LBL_ASSIGNED_TO'), 'false', '', 'assigned_user_id');
-            $validatedFields[] = 'assigned_user_name';
-            //Add remaining validation dependency for related fields
-            //1) a relate type as defined in vardefs
-            //2) set in metadata layout
-            //3) not have validateDepedency set to false in metadata
-            //4) have id_name in vardef entry
-            //5) not already been added to Array
-            foreach($sugarbean->field_name_map as $name=>$def) {
+            //Remove all the copyright comments
+            $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
 
-               if($def['type']=='relate' &&
-                  isset($defs2[$name]) &&
-                  (!isset($defs2[$name]['validateDependency']) || $defs2[$name]['validateDependency'] === true) &&
-                  isset($def['id_name']) &&
-                  !in_array($name, $validatedFields)) {
-
-                  if(isset($mod_strings[$def['vname']])
-                        || isset($app_strings[$def['vname']])
-                        || translate($def['vname'],$sugarbean->module_dir) != $def['vname']) {
-                     $vname = $def['vname'];
-                  }
-                  else{
-                     $vname = "undefined";
-                  }
-                  $javascript->addToValidateBinaryDependency($name, 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty($vname), (!empty($def['required']) ? 'true' : 'false'), '', $def['id_name']);
-                  $validatedFields[] = $name;
-               }
-            } //foreach
-
-            $contents .= "{literal}\n";
-            $contents .= $javascript->getScript();
-            $contents .= $this->createQuickSearchCode($defs, $defs2, $view, $module);
-            $contents .= "{/literal}\n";
-        }else if(preg_match('/^SearchForm_.+/', $view)){
-            global $dictionary, $beanList, $app_strings, $mod_strings;
-            $mod = $beanList[$module];
-
-            if($mod == 'aCase') {
-                $mod = 'Case';
+            if($fh = @sugar_fopen($file, 'w')) {
+                fputs($fh, $contents);
+                fclose($fh);
             }
 
-            $defs = $dictionary[$mod]['fields'];
-            $contents .= '{literal}';
-            $contents .= $this->createQuickSearchCode($defs, array(), $view);
-            $contents .= '{/literal}';
-        }//if
 
-        //Remove all the copyright comments
-        $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
+            $this->ss->left_delimiter = '{';
+            $this->ss->right_delimiter = '}';
 
-        if($fh = @sugar_fopen($file, 'w')) {
-            fputs($fh, $contents);
-            fclose($fh);
         }
-
-
-        $this->ss->left_delimiter = '{';
-        $this->ss->right_delimiter = '}';
     }
 
     /**
@@ -251,12 +308,12 @@ class TemplateHandler {
      * @param module string module name
      * @param view string view need (eg DetailView, EditView, etc)
      */
-    function checkTemplate($module, $view, $checkFormName = false, $formName='') {
+    function checkTemplate($module, $view, $type = 'tpl', $checkFormName = false, $formName='') {
         if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
             return false;
         }
         $view = $checkFormName ? $formName : $view;
-        return file_exists($this->cacheDir . $this->templateDir . $module . '/' .$view . '.tpl');
+        return file_exists($this->cacheDir . $this->templateDir . $module . '/' .$view . $type);
     }
 
     /**
@@ -269,17 +326,38 @@ class TemplateHandler {
      * @param metaData Optional metadata definition Array
      */
     function displayTemplate($module, $view, $tpl, $ajaxSave = false, $metaDataDefs = null) {
-        $this->loadSmarty();
-        if(!$this->checkTemplate($module, $view)) {
-            $this->buildTemplate($module, $view, $tpl, $ajaxSave, $metaDataDefs);
-        }
-        $file = $this->cacheDir . $this->templateDir . $module . '/' . $view . '.tpl';
-        if(file_exists($file)) {
-           return $this->ss->fetch($file);
+        $bean = BeanFactory::getBean($module);
+
+        if($bean->angular) {
+            if (!$this->checkTemplate($module, $view, 'json')) {
+                $this->buildTemplate($module, $view, $tpl, $ajaxSave, $metaDataDefs);
+            }
+
+            echo '
+                <body ng-app="CrudApp">
+
+            <div class="container">
+              <div ng-view></div>
+            </div>
+
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+            <script type="text/javascript" src ="front/js/app.js"></script>
+             ';
+
+            //do angular
         } else {
-           global $app_strings;
-           $GLOBALS['log']->fatal($app_strings['ERR_NO_SUCH_FILE'] .": $file");
-           return $app_strings['ERR_NO_SUCH_FILE'] .": $file";
+            $this->loadSmarty();
+            if (!$this->checkTemplate($module, $view)) {
+                $this->buildTemplate($module, $view, $tpl, $ajaxSave, $metaDataDefs);
+            }
+            $file = $this->cacheDir . $this->templateDir . $module . '/' . $view . '.tpl';
+            if (file_exists($file)) {
+                return $this->ss->fetch($file);
+            } else {
+                global $app_strings;
+                $GLOBALS['log']->fatal($app_strings['ERR_NO_SUCH_FILE'] . ": $file");
+                return $app_strings['ERR_NO_SUCH_FILE'] . ": $file";
+            }
         }
     }
 

@@ -145,7 +145,7 @@ class TemplateHandler {
 
                     } //foreach
                 } //foreach
-                $panels[$panel_id] = $rows;
+                $panels[strtoupper($panel_id)] = $rows;
             } //foreach
 
             $metaDataDefs['panels'] = $panels;
@@ -334,13 +334,14 @@ class TemplateHandler {
             }
 
             echo '
-                <body ng-app="CrudApp">
+                <body ng-app="SuiteCRM">
 
             <div class="container">
               <div ng-view></div>
             </div>
 
-            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
             <script type="text/javascript" src ="front/js/app.js"></script>
              ';
 

@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="front/schipol_style.css">
 <div class="pull-left left">
     <div class='panel' ng-repeat="(panel_key, field_array) in panels">
-        <div>{{panel_key}}</div>
+        <div><label>{{ language[panel_key] }}<em ng-hide="!f.displayParams.required">*</em> :</label></div>
         <div ng-repeat="field in field_array">
             <div ng-repeat="f in field" ng-include="'front/fieldtemplates/field_template.html'"></div>
         </div>
@@ -11,7 +11,13 @@
 </div>
 
 <div class="pull-right right">
-   <p>{{record}}</p>
+    <h1>Call Script</h1>
+    <p>1. Can I take your account name please?</p>
+    <p>1. Do you have a contact telephone number?</p>
+    <br/>
+    <h1>Confirmation Script</h1>
+    <p>Your account name is {{record.name}}</p>
+    <p>Your have provided  {{record.phone_office}} as your contact number</p>
 </div>
 
 </body>

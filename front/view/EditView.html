@@ -1,13 +1,19 @@
 <h1>Accounts</h1>
-
-<div class='panel' ng-repeat="(panel_key, field_array) in panels">
-    <div>{{panel_key}}</div>
-    <div ng-repeat="field in field_array">
+<link rel="stylesheet" type="text/css" href="front/schipol_style.css">
+<div class="pull-left left">
+    <div class='panel' ng-repeat="(panel_key, field_array) in panels">
+        <div>{{panel_key}}</div>
+        <div ng-repeat="field in field_array">
             <div ng-repeat="f in field" ng-include="'front/fieldtemplates/field_template.html'"></div>
-    </div>
+        </div>
 
+    </div>
 </div>
-<p>{{record}}</p>
+
+<div class="pull-right right">
+   <p>{{record}}</p>
+</div>
+
 </body>
 
 

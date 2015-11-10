@@ -2,24 +2,9 @@
 <label>{{ language[f.label] }}<em ng-hide="!f.displayParams.required">*</em> :</label>
 <!--<label>{{f.label}}<em ng-hide="!f.displayParams.required">*</em> :</label>-->
 <span ng-switch on="f.type">
-    <span ng-switch-when="varchar">
-
-        <input class="form-control" ng-model="record[f.name]" name="{{f.name}}" type="text"/>
-
-    </span>
     <span ng-switch-when="relate">
 
         <input class="form-control" ng-model="record[f.name]" type="text" name="{{f.name}}"/>
-
-    </span>
-    <span ng-switch-when="link">
-
-        <input class="form-control" ng-model="record[f.name]" name="{{f.name}}" type="text"/>
-
-    </span>
-    <span ng-switch-when="name">
-
-       <input class="form-control" ng-model="record[f.name]" type="text" name="{{f.name}}"/>
 
     </span>
     <span ng-switch-when="phone">
@@ -45,6 +30,11 @@
      <p><label>State<em ng-hide="!f.displayParams.required">*</em>:</label><input class="form-control" name="{{f.name}}_state" type="text"/></p>
      <p><label>City<em ng-hide="!f.displayParams.required">*</em>:</label><input class="form-control" name="{{f.name}}_city" type="text"/></p>
      <p><label>Postalcode<em ng-hide="!f.displayParams.required">*</em>:</label><input class="form-control" name="{{f.name}}_postalcode" type="text"/></p>
+    </span>
+    <span ng-switch-default>
+
+        <input class="form-control" ng-model="record[f.name]" name="{{f.name}}" type="text"/>
+
     </span>
 </span>
 </div>

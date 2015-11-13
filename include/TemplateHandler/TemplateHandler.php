@@ -136,6 +136,9 @@ class TemplateHandler {
                             if(!isset($entry['type']) && isset($field_defs[$field]['type'])){
                                 $entry['type'] = $field_defs[$field]['type'];
                             }
+                            if(!isset($entry['displayParams']['required']) && isset($field_defs[$field]['required'])){
+                                $entry['displayParams']['required'] = $field_defs[$field]['required'];
+                            }
 
                             $rows[$row_id][$field] = $entry;
                         } else {

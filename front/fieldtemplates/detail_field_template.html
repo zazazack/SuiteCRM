@@ -1,0 +1,37 @@
+<div class="form-group">
+    <label>{{ language[f.label] }} :</label>
+    <!--<label>{{f.label}} :</label>-->
+<span ng-switch on="f.type">
+    <span ng-switch-when="relate">
+
+        {{f.name}}
+
+    </span>
+    <span ng-switch-when="phone">
+
+        {{f.name}}
+
+    </span>
+
+    <span ng-switch-when="checkbox">
+      <input class="form-control" ng-model="record[f.name]"  ng-checked="record[f.name]" type="checkbox" disabled/>
+    </span>
+
+    <span ng-switch-when="text">
+        {{f.name}}
+    </span>
+    <span ng-switch-when="enum">
+        {{f.name}}
+    </span>
+    <span ng-switch-when="address">
+        <p>{{f.displayParams.key}}_address_street</p>
+        <p>{{f.displayParams.key}}_address_city {{f.displayParams.key}}_address_state {{f.displayParams.key}}_address_postalcode</p>
+        <p>{{f.displayParams.key}}_address_country</p>
+    </span>
+    <span ng-switch-default>
+
+        {{f.name}}
+
+    </span>
+</span>
+</div>

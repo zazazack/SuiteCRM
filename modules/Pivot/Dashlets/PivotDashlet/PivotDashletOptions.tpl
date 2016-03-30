@@ -1,3 +1,5 @@
+{*
+
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
@@ -36,33 +38,72 @@
  * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
-var abouter = function(){
-	return {
-		display:function(){
-			abouter.div = document.getElementById('abouterdiv');
-			abouter.div.style.display ='';
-			abouter.div.src = "index.php?module=Home&action=PopupSugar&to_pdf=true&style=" + abouter.style;
-		},
-		ab:function(index, style){
-			if(abouter.starter == 3){
-				abouter.style = style;
-				abouter.display();
-			}else{
-				if(index == abouter.starter + 1){
-					abouter.starter++;
-				}else{
-					abouter.starter= 0;
-				}
-			}
-
-		}
 
 
 
-	}
+*}
 
 
+<div style='width: 500px'>
+<form name='configure_{$id}' action="index.php" method="post" onSubmit='return SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.refreshPageForAnalytics);'>
+<input type='hidden' name='id' value='{$id}'>
+<input type='hidden' name='module' value='Home'>
+<input type='hidden' name='action' value='ConfigureDashlet'>
+<input type='hidden' name='to_pdf' value='true'>
+<input type='hidden' name='configure' value='true'>
+<table width="400" cellpadding="0" cellspacing="0" border="0" class="edit view" align="center">
+<tr>
+    <td valign='top' nowrap class='dataLabel'>{$titleLbl}</td>
+    <td valign='top' class='dataField'>
+    	<input class="text" name="title" size='20' value='{$title}'>
+    </td>
+</tr>
+    <tr>
+        <td scope='row'>{$pivotToLoadTitleLbl}</td>
+        <td>
+            <select name="pivots" id="pivots-{$id}">
+            </select>
+            <script type="text/javascript">
 
-}();
-abouter.starter = 0;
-abouter.style = 'inc';
+                {literal}
+
+                $(function() {
+                    {/literal}
+                    var options = "";
+                    $({$pivots}).each(function(i,e)
+                    {literal}
+                    {
+                        {/literal}
+                        if("{$pivotToLoad}" !==e.id)
+                            options+="<option value='"+ e.id+"'>"+ e.name+"</option>";
+                        else
+                            options+="<option value='"+ e.id+"' selected>"+ e.name+"</option>";
+                        {literal}
+                    });
+                    {/literal}
+                    $('#pivots-{$id}').empty().append(options);
+                    {literal}
+                    });
+
+                {/literal}
+
+            </script>
+        </td>
+    </tr>
+    <tr>
+        <td scope='row'>
+            <label for="showGui{$id}">{$showUILbl}</label>
+        </td>
+        <td>
+            <input type='checkbox' id='showGui{$id}' name='showGui' {if $showUI}checked='checked'{/if}>
+        </td>
+
+    </tr>
+<tr>
+    <td align="right" colspan="2">
+        <input type='submit' class='button' value='{$saveLbl}'>
+   	</td>
+</tr>
+</table>
+</form>
+</div>

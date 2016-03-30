@@ -1,3 +1,4 @@
+<?php
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
@@ -36,33 +37,59 @@
  * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
-var abouter = function(){
-	return {
-		display:function(){
-			abouter.div = document.getElementById('abouterdiv');
-			abouter.div.style.display ='';
-			abouter.div.src = "index.php?module=Home&action=PopupSugar&to_pdf=true&style=" + abouter.style;
-		},
-		ab:function(index, style){
-			if(abouter.starter == 3){
-				abouter.style = style;
-				abouter.display();
-			}else{
-				if(index == abouter.starter + 1){
-					abouter.starter++;
-				}else{
-					abouter.starter= 0;
-				}
-			}
-
-		}
-
-
-
-	}
-
-
-
-}();
-abouter.starter = 0;
-abouter.style = 'inc';
+$dictionary['Pivot'] = array(
+	'table'=>'pivot',
+	'audited'=>true,
+    'inline_edit'=>true,
+		'duplicate_merge'=>true,
+		'fields'=>array (
+  'config' => 
+  array (
+    'required' => true,
+    'name' => 'config',
+    'vname' => 'LBL_CONFIG',
+    'type' => 'longtext',
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled'
+  ),
+  'type' => 
+  array (
+    'required' => true,
+    'name' => 'type',
+    'vname' => 'LBL_TYPE',
+    'type' => 'varchar',
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => true,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => '255',
+    'size' => '20',
+  ),
+),
+	'relationships'=>array (
+),
+	'optimistic_locking'=>true,
+		'unified_search'=>true,
+	);
+if (!class_exists('VardefManager')){
+        require_once('include/SugarObjects/VardefManager.php');
+}
+VardefManager::createVardef('Pivot','Pivot', array('basic','assignable','security_groups'));

@@ -1,3 +1,5 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
@@ -36,33 +38,26 @@
  * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
-var abouter = function(){
-	return {
-		display:function(){
-			abouter.div = document.getElementById('abouterdiv');
-			abouter.div.style.display ='';
-			abouter.div.src = "index.php?module=Home&action=PopupSugar&to_pdf=true&style=" + abouter.style;
-		},
-		ab:function(index, style){
-			if(abouter.starter == 3){
-				abouter.style = style;
-				abouter.display();
-			}else{
-				if(index == abouter.starter + 1){
-					abouter.starter++;
-				}else{
-					abouter.starter= 0;
-				}
-			}
-
-		}
 
 
 
-	}
+global $current_user;
 
-
-
-}();
-abouter.starter = 0;
-abouter.style = 'inc';
+$dashletData['PivotDashlet']['searchFields'] = array('date_entered'     => array('default' => ''),
+                                                          'date_modified'    => array('default' => ''),
+                                                          'assigned_user_id' => array('type'    => 'assigned_user_name', 
+                                                                                      'default' => $current_user->name));
+$dashletData['PivotDashlet']['columns'] =  array(   'name' => array('width'   => '40',
+                                                                      'label'   => 'LBL_LIST_NAME',
+                                                                      'link'    => true,
+                                                                      'default' => true), 
+                                                      'date_entered' => array('width'   => '15', 
+                                                                              'label'   => 'LBL_DATE_ENTERED',
+                                                                              'default' => true),
+                                                      'date_modified' => array('width'   => '15', 
+                                                                              'label'   => 'LBL_DATE_MODIFIED'),    
+                                                      'created_by' => array('width'   => '8', 
+                                                                            'label'   => 'LBL_CREATED'),
+                                                      'assigned_user_name' => array('width'   => '8', 
+                                                                                     'label'   => 'LBL_LIST_ASSIGNED_USER'),
+                                               );

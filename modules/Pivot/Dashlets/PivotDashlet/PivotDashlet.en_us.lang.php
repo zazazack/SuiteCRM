@@ -1,7 +1,10 @@
+<?php
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
-
  * SuiteCRM is an extension to SugarCRM Community Edition developed by Salesagility Ltd.
  * Copyright (C) 2011 - 2014 Salesagility Ltd.
  *
@@ -36,33 +39,32 @@
  * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
-var abouter = function(){
-	return {
-		display:function(){
-			abouter.div = document.getElementById('abouterdiv');
-			abouter.div.style.display ='';
-			abouter.div.src = "index.php?module=Home&action=PopupSugar&to_pdf=true&style=" + abouter.style;
-		},
-		ab:function(index, style){
-			if(abouter.starter == 3){
-				abouter.style = style;
-				abouter.display();
-			}else{
-				if(index == abouter.starter + 1){
-					abouter.starter++;
-				}else{
-					abouter.starter= 0;
-				}
-			}
+$dashletStrings['PivotDashlet'] = array(
+    'LBL_TITLE' => 'Pivot',
+    'LBL_DESCRIPTION' => 'Pivot reports of your data',
+    'LBL_SAVING' => 'Saving Pivot ...',
+    'LBL_SAVED' => 'Saved',
+    'LBL_CONFIGURE_TITLE' => 'Title',
+    'LBL_PIVOT_TO_LOAD' => 'Pivot to Load',
 
-		}
+    'LBL_NO_PIVOT_SELECTED' => 'No pivot selected for display',
+    'LBL_PIVOT_POINTED_DELETED' => 'This pivot has been deleted',
 
+    'LBL_SHOW_UI' => 'Show UI',
+    'LBL_PLEASE_SAVE' => 'Please save a pivot to load',
+    'LBL_PIVOT_LOAD_ERROR' => 'Sorry, this pivot cannot be loaded',
+    'LBL_BTN_SAVE' => 'Save',
+    'LBL_BTN_LOAD' => 'Load',
+    'LBL_BTN_SAVE_PIVOT' => 'Save Pivot',
+    'LBL_TOGGLE_UI' => 'Toggle UI',
 
-
-	}
-
-
-
-}();
-abouter.starter = 0;
-abouter.style = 'inc';
+    'LBL_LOAD_PIVOT' => 'Load pivot',
+    'LBL_PIVOT_SAVED_AS' => 'Pivot saved as',
+    'LBL_LOADED_SUCCESSFULLY' => 'loaded successfully',
+    'LBL_NO_SAVED_PIVOTS' => 'No saved pivots',
+    'LBL_MIN_PIVOT_NANE' => 'Pivot name must be at least',
+    'LBL_CHARACTERS' => 'characters',
+    'LBL_SHOW_UI' => 'Show UI',
+    'LBL_NAME' => 'Name'
+);
+?>

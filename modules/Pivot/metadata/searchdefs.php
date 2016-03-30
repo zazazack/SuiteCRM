@@ -1,3 +1,4 @@
+<?php
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
@@ -36,33 +37,28 @@
  * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
-var abouter = function(){
-	return {
-		display:function(){
-			abouter.div = document.getElementById('abouterdiv');
-			abouter.div.style.display ='';
-			abouter.div.src = "index.php?module=Home&action=PopupSugar&to_pdf=true&style=" + abouter.style;
-		},
-		ab:function(index, style){
-			if(abouter.starter == 3){
-				abouter.style = style;
-				abouter.display();
-			}else{
-				if(index == abouter.starter + 1){
-					abouter.starter++;
-				}else{
-					abouter.starter= 0;
-				}
-			}
-
-		}
-
-
-
-	}
-
-
-
-}();
-abouter.starter = 0;
-abouter.style = 'inc';
+/*
+ * Created on May 29, 2007
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - PHPeclipse - PHP - Code Templates
+ */
+$module_name = 'Pivot';
+  $searchdefs[$module_name] = array(
+					'templateMeta' => array(
+							'maxColumns' => '3',
+  							'maxColumnsBasic' => '4', 
+                            'widths' => array('label' => '10', 'field' => '30'),                 
+                           ),
+                    'layout' => array(  					
+						'basic_search' => array(
+							'name', 
+							array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),
+							),
+						'advanced_search' => array(
+							'name', 
+							array('name' => 'assigned_user_id', 'label' => 'LBL_ASSIGNED_TO', 'type' => 'enum', 'function' => array('name' => 'get_user_array', 'params' => array(false))),
+						),
+					),
+ 			   );
+?>

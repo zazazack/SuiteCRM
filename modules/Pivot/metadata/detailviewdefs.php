@@ -1,3 +1,4 @@
+<?php
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
@@ -36,33 +37,40 @@
  * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
-var abouter = function(){
-	return {
-		display:function(){
-			abouter.div = document.getElementById('abouterdiv');
-			abouter.div.style.display ='';
-			abouter.div.src = "index.php?module=Home&action=PopupSugar&to_pdf=true&style=" + abouter.style;
-		},
-		ab:function(index, style){
-			if(abouter.starter == 3){
-				abouter.style = style;
-				abouter.display();
-			}else{
-				if(index == abouter.starter + 1){
-					abouter.starter++;
-				}else{
-					abouter.starter= 0;
-				}
-			}
+$module_name = 'Pivot';
+$viewdefs[$module_name]['DetailView'] = array(
+'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',
+                                                         )),
+                        'maxColumns' => '2',
+                        'widths' => array(
+                                        array('label' => '10', 'field' => '30'),
+                                        array('label' => '10', 'field' => '30')
+                                        ),
+                        ),
 
-		}
+'panels' =>array (
 
+  array (
+    'name',
+    'assigned_user_name',
+  ),
 
+  array (
+	array (
+      'name' => 'date_entered',
+      'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
+      'label' => 'LBL_DATE_ENTERED',
+    ),
+    array (
+      'name' => 'date_modified',
+      'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+      'label' => 'LBL_DATE_MODIFIED',
+    ),
+  ),
 
-	}
-
-
-
-}();
-abouter.starter = 0;
-abouter.style = 'inc';
+  array (
+    'description',
+  ),
+)
+);
+?>

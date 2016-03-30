@@ -1975,6 +1975,7 @@ $app_strings = array(
     'LBL_VIEW_PDF_BUTTON_TITLE' => 'Print as PDF',
 
     'LNK_ABOUT' => 'About',
+    'LNK_ANALYTICS' => 'Analytics',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
     'LNK_BASIC_SEARCH' => 'Basic Search',
     'LNK_SEARCH_FTS_VIEW_ALL' => 'View all results',
@@ -2428,7 +2429,8 @@ $app_strings = array(
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
-$app_list_strings['library_type'] = array('Books' => 'Book', 'Music' => 'Music', 'DVD' => 'DVD', 'Magazines' => 'Magazines');
+$app_list_strings['moduleList']['Pivot'] = 'Pivot';
+$app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
 $app_list_strings['project_priority_default'] = 'Medium';
 $app_list_strings['project_priority_options'] = array(
